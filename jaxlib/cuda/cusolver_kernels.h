@@ -20,6 +20,7 @@ limitations under the License.
 #include "third_party/gpus/cuda/include/cuda.h"
 #include "third_party/gpus/cuda/include/cuda_runtime_api.h"
 #include "third_party/gpus/cuda/include/cusolverDn.h"
+#include "third_party/gpus/cuda/includes/cuda_headers/third_party/gpus/cuda/include/library_types.h"
 #include "jaxlib/handle_pool.h"
 #include "tensorflow/compiler/xla/service/custom_call_status.h"
 
@@ -128,6 +129,19 @@ struct GesvdjDescriptor {
 };
 
 void Gesvdj(cudaStream_t stream, void** buffers, const char* opaque,
+            size_t opaque_len, XlaCustomCallStatus* status);
+
+// Singular value decomposition using qdwh-based polar decomposition: gesvdp
+struct GesvdpDescriptor {
+  cudaDataType type;
+  int batch, m, n;
+  cusolverEigMode_t jobz;
+  int econ;
+  size_t workspaceInBytesOnDevice;
+  size_t workspaceInBytesOnHost;
+};
+
+void Gesvdp(cudaStream_t stream, void** buffers, const char* opaque,
             size_t opaque_len, XlaCustomCallStatus* status);
 
 }  // namespace jax
